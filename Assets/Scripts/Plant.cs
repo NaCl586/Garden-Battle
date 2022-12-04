@@ -58,6 +58,7 @@ public class Plant : MonoBehaviour
 
     public void HarvestFruit()
     {
+        if (currentPhase != Phases.fruit) return;
         initLeaves();
         //bkin player jadi bawa buah
         //...
