@@ -47,6 +47,7 @@ public class Plant : MonoBehaviour
         infected = this.transform.GetChild(1).GetComponent<SpriteRenderer>();
         currentPhase = Phases.none;
         plantIsAlive = false;
+        waterFertilizerStartTime = 30;
     }
 
 
@@ -58,7 +59,7 @@ public class Plant : MonoBehaviour
 
     public void HarvestFruit()
     {
-        if (currentPhase != Phases.fruit) return;
+        if (!plantIsAlive || currentPhase != Phases.fruit) return;
         initLeaves();
         //bkin player jadi bawa buah
         //...
@@ -66,28 +67,35 @@ public class Plant : MonoBehaviour
 
     public void KasihAir()
     {
+        if (!plantIsAlive) return;
         requireWater = false;
     }
 
     public void KasihFertilizer()
     {
+        if (!plantIsAlive) return;
         requireFertilizer = false;
     }
 
     public void KasihHama()
     {
-        if (pesticideEffects) return;
+        if (!plantIsAlive || pesticideEffects) return;
         infectedWithPest = true;
         waterFertilizerStartTime = 15;
+
+        harvestTimer = 30;
     }
 
     public void KasihPesticide()
     {
+        if (!plantIsAlive) return;
+
         infectedWithPest = false;
         waterFertilizerStartTime = 30;
 
         pesticideEffects = true;
         pesticideTimer = 60;
+
     }
 
 
@@ -102,7 +110,7 @@ public class Plant : MonoBehaviour
             else
                 requireWater = true;
 
-            waterFertilizerTimer = 30;
+            waterFertilizerTimer = waterFertilizerStartTime;
         }
         else
         {
@@ -213,7 +221,7 @@ public class Plant : MonoBehaviour
             );
 
             harvestTimer -= Time.deltaTime;
-            if (harvestTimer == 0) killPlant();
+            if (harvestTimer <= 0) killPlant();
         }
         else if(!infectedWithPest && currentPhase == Phases.fruit)
         {
