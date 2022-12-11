@@ -8,6 +8,7 @@ public class Plant : MonoBehaviour
     [SerializeField] private Sprite requireWaterIcon;
     [SerializeField] private Sprite requireFertilizerIcon;
     [SerializeField] private Sprite infectedIcon;
+    public Sprite fruit;
 
     public Color dullColor;
 
@@ -40,7 +41,8 @@ public class Plant : MonoBehaviour
         fruit
     };
 
-    private void Start()
+    //public methods bisa dipanggil buat player actions nya
+    public void OnEnable()
     {
         sr = this.GetComponent<SpriteRenderer>();
         indicator = this.transform.GetChild(0).GetComponent<SpriteRenderer>();
@@ -48,19 +50,15 @@ public class Plant : MonoBehaviour
         currentPhase = Phases.none;
         plantIsAlive = false;
         waterFertilizerStartTime = 30;
-    }
 
-
-    //public methods bisa dipanggil buat player actions nya
-    public void PlantSeed()
-    {
         initPlant();
     }
 
-    public void HarvestFruit()
+    public bool HarvestFruit()
     {
-        if (!plantIsAlive || currentPhase != Phases.fruit) return;
+        if (!plantIsAlive || currentPhase != Phases.fruit) return false;
         initLeaves();
+        return true;
         //bkin player jadi bawa buah
         //...
     }
@@ -159,11 +157,13 @@ public class Plant : MonoBehaviour
 
     private void killPlant()
     {
-        plantIsAlive = false;
+        transform.parent.gameObject.GetComponent<Plot>().occupiedPlant = null;
+        Destroy(this.gameObject);
+        /*plantIsAlive = false;
         sr.color = Color.white;
         sr.sprite = GrowthPhase[0];
         currentPhase = Phases.none;
-        requireFertilizer = requireWater = infectedWithPest = false;
+        requireFertilizer = requireWater = infectedWithPest = false;*/
     }
 
     // Update is called once per frame

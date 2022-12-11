@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8361309929109158370}
   - component: {fileID: 8361309929109158369}
   - component: {fileID: 8361309929109158368}
-  - component: {fileID: 5748736160201297152}
+  - component: {fileID: 8367951563175408679}
   m_Layer: 0
   m_Name: PohonPisang
   m_TagString: Untagged
@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8361309929109158375}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.68, y: 0.16, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8361309929230603356}
@@ -74,8 +74,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 7b3bedfa0280aee498a3e830f82a1047, type: 3}
+  m_SortingOrder: 2
+  m_Sprite: {fileID: 21300000, guid: d0bcf23a17bc77b44a69e6a0b70e67fc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -107,20 +107,34 @@ MonoBehaviour:
   requireWaterIcon: {fileID: 21300000, guid: 610be29d4bc778349b95744ae762c440, type: 3}
   requireFertilizerIcon: {fileID: 21300000, guid: 22bb494745703ce4bb325e3925bde1cd, type: 3}
   infectedIcon: {fileID: 21300000, guid: 99d66792167b1994e9924fdf45489371, type: 3}
+  fruit: {fileID: 21300000, guid: d75b42c32655751428f4688dc0c55947, type: 3}
   dullColor: {r: 0.3773585, g: 0.119165845, b: 0, a: 0}
---- !u!65 &5748736160201297152
-BoxCollider:
+--- !u!61 &8367951563175408679
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8361309929109158375}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
   m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 4, y: 4}
+    newSize: {x: 4, y: 4}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.56, y: 2.56, z: 0.2}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 2.56, y: 2.56}
+  m_EdgeRadius: 0
 --- !u!1 &8361309929230603347
 GameObject:
   m_ObjectHideFlags: 0
