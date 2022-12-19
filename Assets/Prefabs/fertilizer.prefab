@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8583991551970967131}
   m_Layer: 8
   m_Name: fertilizer
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -124,3 +124,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: 0
   _itemType: 2
+  glow: 0

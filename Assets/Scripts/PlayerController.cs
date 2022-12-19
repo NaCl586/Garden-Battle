@@ -110,34 +110,13 @@ public class PlayerController : MonoBehaviour
         //check for item
         RaycastHit2D pickUpItem = Physics2D.Raycast(checkVector, directionVector, 2f, itemLayerMask);
 
-        if (pickUpItem)
-        {
-            highlightedItem = pickUpItem.transform.gameObject.GetComponent<Items>();
-            highlightedItem.glow = true;
-        }
-        else
-        {
-            foreach (Items i in items)
-                i.glow = false;
-        }
-
         //check for plot
         RaycastHit2D selectedPlot = Physics2D.Raycast(checkVector, directionVector, 2f, plotLayerMask);
-
-        if (selectedPlot)
-        {
-            highlightedPlot = selectedPlot.transform.gameObject.GetComponent<Plot>();
-            highlightedPlot.glow = true;
-        }
-        else if(highlightedPlot)
-        {
-            highlightedPlot.glow = false;
-        }
 
         //item and plot overlap
         if (Input.GetKey(actionKey))
         {
-            if (pickUpItem)
+            if (highlightedItem)
             {
                 changeState(states.holding, highlightedItem._itemType, highlightedItem.gameObject.GetComponent<SpriteRenderer>().sprite);
             }
@@ -175,7 +154,9 @@ public class PlayerController : MonoBehaviour
                     changeState(states.none);
                 }
                 //panen
-                else 
+                else if(highlightedPlot.occupiedPlant &&
+                        highlightedPlot.occupiedPlant == pool.plants[plantType] &&
+                    highlightedPlot.occupiedPlant.currentPhase == Plant.Phases.fruit)
                 {
                     if (highlightedPlot.occupiedPlant.HarvestFruit())
                     {
@@ -185,5 +166,49 @@ public class PlayerController : MonoBehaviour
             }
         }
         
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Plot"))
+        {
+            collision.gameObject.GetComponent<Plot>().glow = true;
+            highlightedPlot = collision.gameObject.GetComponent<Plot>();
+        }
+
+        if (collision.gameObject.CompareTag("Item"))
+        {
+            highlightedItem = collision.gameObject.GetComponent<Items>();
+            bool found = false;
+            foreach (Items i in items)
+            {
+                if (i == highlightedItem)
+                {
+                    found = true;
+                    highlightedItem.glow = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                highlightedItem = null;
+            }
+        }
+
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Plot"))
+        {
+            collision.gameObject.GetComponent<Plot>().glow = false;
+            highlightedPlot = null;
+        }
+
+        if (collision.gameObject.CompareTag("Item"))
+        {
+            collision.gameObject.GetComponent<Items>().glow = false;
+            highlightedItem = null;
+        }
     }
 }

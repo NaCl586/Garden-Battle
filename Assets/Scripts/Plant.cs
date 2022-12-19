@@ -29,11 +29,11 @@ public class Plant : MonoBehaviour
 
     private bool plantIsAlive;
 
-    private Phases currentPhase;
+    public Phases currentPhase;
 
     private int waterFertilizerStartTime = 30;
 
-    private enum Phases{
+    public enum Phases{
         none,
         seed,
         stem,
