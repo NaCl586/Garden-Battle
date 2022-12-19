@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
         holdedItem.sprite = sprite;
     }
 
-    Items highlightedItem;
+    Items highlightedItem, glowedItem;
     Plot highlightedPlot;
 
     // Update is called once per frame
@@ -109,6 +109,29 @@ public class PlayerController : MonoBehaviour
 
         //check for item
         RaycastHit2D pickUpItem = Physics2D.Raycast(checkVector, directionVector, 2f, itemLayerMask);
+        if (pickUpItem)
+        {
+            highlightedItem = pickUpItem.collider.gameObject.GetComponent<Items>();
+            bool found = false;
+            foreach (Items i in items)
+            {
+                if (i == highlightedItem)
+                {
+                    found = true;
+                    highlightedItem.glow = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                highlightedItem.glow = false;
+                highlightedItem = null;
+            }
+        }
+        else if(highlightedItem)
+        {
+            highlightedItem.glow = false;
+        }
 
         //check for plot
         RaycastHit2D selectedPlot = Physics2D.Raycast(checkVector, directionVector, 2f, plotLayerMask);
@@ -133,39 +156,40 @@ public class PlayerController : MonoBehaviour
                     }
                     changeState(states.none);
                 }
-                else if (holdedItemType == itemType.wateringcan)
-                {
-                    highlightedPlot.occupiedPlant.KasihAir();
-                    changeState(states.none);
-                }
-                else if (holdedItemType == itemType.fertilizer)
-                {
-                    highlightedPlot.occupiedPlant.KasihFertilizer();
-                    changeState(states.none);
-                }
-                else if (holdedItemType == itemType.pesticide)
-                {
-                    highlightedPlot.occupiedPlant.KasihPesticide();
-                    changeState(states.none);
-                }
-                else if (holdedItemType == itemType.pest)
-                {
-                    highlightedPlot.occupiedPlant.KasihHama();
-                    changeState(states.none);
-                }
-                //panen
                 else if(highlightedPlot.occupiedPlant &&
-                        highlightedPlot.occupiedPlant == pool.plants[plantType] &&
-                    highlightedPlot.occupiedPlant.currentPhase == Plant.Phases.fruit)
+                        highlightedPlot.occupiedPlant == pool.plants[plantType])
                 {
-                    if (highlightedPlot.occupiedPlant.HarvestFruit())
+                    if (holdedItemType == itemType.wateringcan)
                     {
-                        changeState(states.holding, itemType.keranjang, highlightedPlot.occupiedPlant.fruit);
+                        highlightedPlot.occupiedPlant.KasihAir();
+                        changeState(states.none);
+                    }
+                    else if (holdedItemType == itemType.fertilizer)
+                    {
+                        highlightedPlot.occupiedPlant.KasihFertilizer();
+                        changeState(states.none);
+                    }
+                    else if (holdedItemType == itemType.pesticide)
+                    {
+                        highlightedPlot.occupiedPlant.KasihPesticide();
+                        changeState(states.none);
+                    }
+                    else if (holdedItemType == itemType.pest)
+                    {
+                        highlightedPlot.occupiedPlant.KasihHama();
+                        changeState(states.none);
+                    }
+                    //panen
+                    else if (highlightedPlot.occupiedPlant.currentPhase == Plant.Phases.fruit)
+                    {
+                        if (highlightedPlot.occupiedPlant.HarvestFruit())
+                        {
+                            changeState(states.holding, itemType.keranjang, highlightedPlot.occupiedPlant.fruit);
+                        }
                     }
                 }
             }
         }
-        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -173,28 +197,8 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Plot"))
         {
             collision.gameObject.GetComponent<Plot>().glow = true;
-            highlightedPlot = collision.gameObject.GetComponent<Plot>();
+            
         }
-
-        if (collision.gameObject.CompareTag("Item"))
-        {
-            highlightedItem = collision.gameObject.GetComponent<Items>();
-            bool found = false;
-            foreach (Items i in items)
-            {
-                if (i == highlightedItem)
-                {
-                    found = true;
-                    highlightedItem.glow = true;
-                    break;
-                }
-            }
-            if (!found)
-            {
-                highlightedItem = null;
-            }
-        }
-
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -203,12 +207,6 @@ public class PlayerController : MonoBehaviour
         {
             collision.gameObject.GetComponent<Plot>().glow = false;
             highlightedPlot = null;
-        }
-
-        if (collision.gameObject.CompareTag("Item"))
-        {
-            collision.gameObject.GetComponent<Items>().glow = false;
-            highlightedItem = null;
         }
     }
 }
