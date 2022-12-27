@@ -32,6 +32,10 @@ public class PlayerController : MonoBehaviour
     [Header("Sprite Change")]
     public int plantType = 0;
 
+    public int score = 0;
+    public static bool canMove = false;
+    public Text scoreText;
+
     public enum states
     {
         none, holding
@@ -42,6 +46,10 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        score = 0;
+        scoreText.text = score.ToString();
+        canMove = false;
+
         holdedItem = this.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
         playerSprite = this.GetComponent<SpriteRenderer>();
 
@@ -93,22 +101,27 @@ public class PlayerController : MonoBehaviour
             inputX = 1;
             direction = 'r';
         }
-        rb.MovePosition(rb.position + new Vector2(inputX, inputY) * speed);
+        if(canMove) rb.MovePosition(rb.position + new Vector2(inputX, inputY) * speed);
 
         //convert direction to vector
         Vector2 directionVector = Vector2.zero;
-        switch (direction)
+        if (canMove)
         {
-            case 'u': directionVector = Vector2.up; break;
-            case 'd': directionVector = Vector2.down; break;
-            case 'l': directionVector = Vector2.left; break;
-            case 'r': directionVector = Vector2.right; break;
+            switch (direction)
+            {
+                case 'u': directionVector = Vector2.up; break;
+                case 'd': directionVector = Vector2.down; break;
+                case 'l': directionVector = Vector2.left; break;
+                case 'r': directionVector = Vector2.right; break;
+            }
         }
+        
         
         Vector2 checkVector = (Vector2)transform.position + Vector2.down * 0.75f;
 
         //check for item
         RaycastHit2D pickUpItem = Physics2D.Raycast(checkVector, directionVector, 2f, itemLayerMask);
+
         if (pickUpItem)
         {
             highlightedItem = pickUpItem.collider.gameObject.GetComponent<Items>();
@@ -128,36 +141,55 @@ public class PlayerController : MonoBehaviour
                 highlightedItem = null;
             }
         }
-        else if(highlightedItem)
+        else
         {
-            highlightedItem.glow = false;
+            foreach (Items i in items)
+            {
+                i.glow = false;
+            }
         }
 
         //check for plot
         RaycastHit2D selectedPlot = Physics2D.Raycast(checkVector, directionVector, 2f, plotLayerMask);
+        if (selectedPlot)
+        {
+            highlightedPlot = selectedPlot.collider.gameObject.GetComponent<Plot>();
+        }
 
         //item and plot overlap
-        if (Input.GetKey(actionKey))
+        if (Input.GetKey(actionKey) && canMove)
         {
-            if (highlightedItem)
+            //pickup item
+            if (pickUpItem && highlightedItem)
             {
-                changeState(states.holding, highlightedItem._itemType, highlightedItem.gameObject.GetComponent<SpriteRenderer>().sprite);
+                if (highlightedItem._itemType != itemType.keranjang)
+                {
+                    changeState(states.holding, highlightedItem._itemType, highlightedItem.gameObject.GetComponent<SpriteRenderer>().sprite);
+                }
+                else if(highlightedItem._itemType == itemType.keranjang && 
+                    holdedItemType == itemType.keranjang)
+                {
+                    highlightedItem.gameObject.GetComponent<SpriteRenderer>().sprite = highlightedItem.gameObject.GetComponent<Keranjang>().full;
+                    score++;
+                    scoreText.text = score.ToString();
+                    changeState(states.none);
+                }
+                
             }
+            //do action on plot
             if (selectedPlot && highlightedPlot)
             {
                 //nanem
-                if (holdedItemType == itemType.seed)
+                if (holdedItemType == itemType.seed && !highlightedPlot.occupiedPlant)
                 {
-                    if (!highlightedPlot.occupiedPlant)
-                    {
-                        Plant newPlant = Instantiate(pool.plants[plantType], selectedPlot.transform);
-                        newPlant.transform.localPosition = Vector3.up * 0.5f;
-                        highlightedPlot.occupiedPlant = newPlant;
-                    }
+                    Plant newPlant = Instantiate(pool.plants[plantType], selectedPlot.transform);
+                    newPlant.name = pool.plants[plantType].name;
+                    newPlant.transform.localPosition = Vector3.up * 0.5f;
+                    highlightedPlot.occupiedPlant = newPlant;
                     changeState(states.none);
                 }
                 else if(highlightedPlot.occupiedPlant &&
-                        highlightedPlot.occupiedPlant == pool.plants[plantType])
+                        highlightedPlot.occupiedPlant.name == pool.plants[plantType].name)
                 {
                     if (holdedItemType == itemType.wateringcan)
                     {
@@ -180,7 +212,8 @@ public class PlayerController : MonoBehaviour
                         changeState(states.none);
                     }
                     //panen
-                    else if (highlightedPlot.occupiedPlant.currentPhase == Plant.Phases.fruit)
+                    else if (highlightedPlot.occupiedPlant.currentPhase == Plant.Phases.fruit &&
+                        holdedItemType != itemType.keranjang)
                     {
                         if (highlightedPlot.occupiedPlant.HarvestFruit())
                         {
@@ -197,7 +230,6 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Plot"))
         {
             collision.gameObject.GetComponent<Plot>().glow = true;
-            
         }
     }
 
