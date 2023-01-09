@@ -188,7 +188,7 @@ public class PlayerController : MonoBehaviour
                     highlightedPlot.occupiedPlant = newPlant;
                     changeState(states.none);
                 }
-                else if(highlightedPlot.occupiedPlant &&
+                else if (highlightedPlot.occupiedPlant &&
                         highlightedPlot.occupiedPlant.name == pool.plants[plantType].name)
                 {
                     if (holdedItemType == itemType.wateringcan)
@@ -206,11 +206,6 @@ public class PlayerController : MonoBehaviour
                         highlightedPlot.occupiedPlant.KasihPesticide();
                         changeState(states.none);
                     }
-                    else if (holdedItemType == itemType.pest)
-                    {
-                        highlightedPlot.occupiedPlant.KasihHama();
-                        changeState(states.none);
-                    }
                     //panen
                     else if (highlightedPlot.occupiedPlant.currentPhase == Plant.Phases.fruit &&
                         holdedItemType != itemType.keranjang)
@@ -219,6 +214,15 @@ public class PlayerController : MonoBehaviour
                         {
                             changeState(states.holding, itemType.keranjang, highlightedPlot.occupiedPlant.fruit);
                         }
+                    }
+                }
+                else if (highlightedPlot.occupiedPlant &&
+                        highlightedPlot.occupiedPlant.name != pool.plants[plantType].name)
+                {
+                    if (holdedItemType == itemType.pest)
+                    {
+                        highlightedPlot.occupiedPlant.KasihHama();
+                        changeState(states.none);
                     }
                 }
             }

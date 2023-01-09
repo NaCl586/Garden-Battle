@@ -69,9 +69,9 @@ public class GameManager : MonoBehaviour
         countdownText.text = "Time Up!";
         PlayerController.canMove = false;
         states = GMStates.finish;
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSecondsRealtime(2);
         countdownText.text = "";
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSecondsRealtime(2);
 
         if (int.Parse(playerOneText.text) > int.Parse(playerTwoText.text))
             countdownText.text = "Player 1 Win!";
