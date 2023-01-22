@@ -5,6 +5,14 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private AudioSource takeItem;
+    [SerializeField] private AudioSource bugPlace;
+    [SerializeField] private AudioSource bugRepellant;
+    [SerializeField] private AudioSource fertilizerAudio;
+    [SerializeField] private AudioSource Planting;
+    [SerializeField] private AudioSource Watering;
+    [SerializeField] private AudioSource Harvesting;
+
     [Header("Keybind and Movement")]
     public KeyCode moveForward;
     public KeyCode moveBackward;
@@ -124,6 +132,7 @@ public class PlayerController : MonoBehaviour
 
         if (pickUpItem)
         {
+           
             highlightedItem = pickUpItem.collider.gameObject.GetComponent<Items>();
             bool found = false;
             foreach (Items i in items)
@@ -162,6 +171,7 @@ public class PlayerController : MonoBehaviour
             //pickup item
             if (pickUpItem && highlightedItem)
             {
+                takeItem.Play();
                 if (highlightedItem._itemType != itemType.keranjang)
                 {
                     changeState(states.holding, highlightedItem._itemType, highlightedItem.gameObject.GetComponent<SpriteRenderer>().sprite);
@@ -182,6 +192,7 @@ public class PlayerController : MonoBehaviour
                 //nanem
                 if (holdedItemType == itemType.seed && !highlightedPlot.occupiedPlant)
                 {
+                    Planting.Play();
                     Plant newPlant = Instantiate(pool.plants[plantType], selectedPlot.transform);
                     newPlant.name = pool.plants[plantType].name;
                     newPlant.transform.localPosition = Vector3.up * 0.5f;
@@ -193,16 +204,19 @@ public class PlayerController : MonoBehaviour
                 {
                     if (holdedItemType == itemType.wateringcan)
                     {
+                        Watering.Play();
                         highlightedPlot.occupiedPlant.KasihAir();
                         changeState(states.none);
                     }
                     else if (holdedItemType == itemType.fertilizer)
                     {
+                        fertilizerAudio.Play();
                         highlightedPlot.occupiedPlant.KasihFertilizer();
                         changeState(states.none);
                     }
                     else if (holdedItemType == itemType.pesticide)
                     {
+                        bugRepellant.Play();
                         highlightedPlot.occupiedPlant.KasihPesticide();
                         changeState(states.none);
                     }
@@ -212,6 +226,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (highlightedPlot.occupiedPlant.HarvestFruit())
                         {
+                            Harvesting.Play();
                             changeState(states.holding, itemType.keranjang, highlightedPlot.occupiedPlant.fruit);
                         }
                     }
@@ -221,6 +236,7 @@ public class PlayerController : MonoBehaviour
                 {
                     if (holdedItemType == itemType.pest)
                     {
+                        bugPlace.Play();
                         highlightedPlot.occupiedPlant.KasihHama();
                         changeState(states.none);
                     }

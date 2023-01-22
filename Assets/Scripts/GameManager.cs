@@ -11,6 +11,10 @@ public class GameManager : MonoBehaviour
     public Text playerTwoText;
     public float timer;
 
+    [SerializeField] private AudioSource Tick;
+    [SerializeField] private AudioSource TimeUp;
+
+
     private enum GMStates
     {
         countdown, play, finish
@@ -28,10 +32,13 @@ public class GameManager : MonoBehaviour
 
     IEnumerator countdown()
     {
+        Tick.Play();
         countdownText.text = "3";
         yield return new WaitForSeconds(1);
+        Tick.Play();
         countdownText.text = "2";
         yield return new WaitForSeconds(1);
+        Tick.Play();
         countdownText.text = "1";
         yield return new WaitForSeconds(1);
         countdownText.text = "Plant!";
@@ -64,6 +71,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator timeUp()
     {
+        TimeUp.Play();
         Time.timeScale = 0;
         timerText.text = "0:00";
         countdownText.text = "Time Up!";
