@@ -82,10 +82,22 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(2);
 
         if (int.Parse(playerOneText.text) > int.Parse(playerTwoText.text))
+        {
             countdownText.text = "Player 1 Win!";
+            FindObjectOfType<GameDone>().EndGame();
+        }
+            
         else if (int.Parse(playerOneText.text) < int.Parse(playerTwoText.text))
+        {
             countdownText.text = "Player 2 Win!";
-        else 
+            FindObjectOfType<GameDone>().EndGame();
+        }
+            
+        else
+        {
             countdownText.text = "Draw!";
+            FindObjectOfType<GameDone>().EndGame();
+        }
+            
     }
 }
