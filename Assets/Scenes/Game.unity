@@ -4451,6 +4451,10 @@ PrefabInstance:
       propertyPath: actionKey
       value: 304
       objectReference: {fileID: 0}
+    - target: {fileID: 3627957306526309319, guid: 10c46b2a169123e45b54afe9707beada, type: 3}
+      propertyPath: plantType
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3627957306526309322, guid: 10c46b2a169123e45b54afe9707beada, type: 3}
       propertyPath: m_Name
       value: Player (1)
