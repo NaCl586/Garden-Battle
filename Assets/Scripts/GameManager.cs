@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
         states = GMStates.countdown;
         PlayerController.canMove = false;
         StartCoroutine(countdown());
+
+        //Time.timeScale = 5f;
     }
 
     IEnumerator countdown()

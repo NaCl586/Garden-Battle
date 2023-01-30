@@ -28,8 +28,9 @@ public class PlayerController : MonoBehaviour
     [Header("Sprite Change")]
     private SpriteRenderer holdedItem;
     private SpriteRenderer playerSprite;
-    public Sprite[] playerStates;
+    //public Sprite[] playerStates;
     public itemType holdedItemType;
+    public Animator playerAnimation;
 
     public LayerMask itemLayerMask;
     public LayerMask plotLayerMask;
@@ -70,13 +71,9 @@ public class PlayerController : MonoBehaviour
         changeState(states.none);
     }
 
-    public void changeState(states newState, itemType _itemType = itemType.none, Sprite sprite = null)
+    public void changeState(states newState, itemType _itemType = itemType.none, Sprite sprite = null, char direction = 'd')
     {
         state = newState;
-        if(state == states.none)
-            playerSprite.sprite = playerStates[0];
-        else if (state == states.holding)
-            playerSprite.sprite = playerStates[1];
 
         holdedItemType = _itemType;
         holdedItem.sprite = sprite;
@@ -174,15 +171,16 @@ public class PlayerController : MonoBehaviour
                 takeItem.Play();
                 if (highlightedItem._itemType != itemType.keranjang)
                 {
-                    changeState(states.holding, highlightedItem._itemType, highlightedItem.gameObject.GetComponent<SpriteRenderer>().sprite);
+                    changeState(states.holding, highlightedItem._itemType, highlightedItem.gameObject.GetComponent<SpriteRenderer>().sprite, direction);
                 }
                 else if(highlightedItem._itemType == itemType.keranjang && 
                     holdedItemType == itemType.keranjang)
                 {
                     highlightedItem.gameObject.GetComponent<SpriteRenderer>().sprite = highlightedItem.gameObject.GetComponent<Keranjang>().full;
+                    highlightedItem.gameObject.GetComponentInChildren<ParticleSystem>().Play();
                     score++;
                     scoreText.text = score.ToString();
-                    changeState(states.none);
+                    changeState(states.none, itemType.none, null, direction);
                 }
                 
             }
@@ -197,7 +195,7 @@ public class PlayerController : MonoBehaviour
                     newPlant.name = pool.plants[plantType].name;
                     newPlant.transform.localPosition = Vector3.up * 0.5f;
                     highlightedPlot.occupiedPlant = newPlant;
-                    changeState(states.none);
+                    changeState(states.none, itemType.none, null, direction);
                 }
                 else if (highlightedPlot.occupiedPlant &&
                         highlightedPlot.occupiedPlant.name == pool.plants[plantType].name)
@@ -206,19 +204,19 @@ public class PlayerController : MonoBehaviour
                     {
                         Watering.Play();
                         highlightedPlot.occupiedPlant.KasihAir();
-                        changeState(states.none);
+                        changeState(states.none, itemType.none, null, direction);
                     }
                     else if (holdedItemType == itemType.fertilizer)
                     {
                         fertilizerAudio.Play();
                         highlightedPlot.occupiedPlant.KasihFertilizer();
-                        changeState(states.none);
+                        changeState(states.none, itemType.none, null, direction);
                     }
                     else if (holdedItemType == itemType.pesticide)
                     {
                         bugRepellant.Play();
                         highlightedPlot.occupiedPlant.KasihPesticide();
-                        changeState(states.none);
+                        changeState(states.none, itemType.none, null, direction);
                     }
                     //panen
                     else if (highlightedPlot.occupiedPlant.currentPhase == Plant.Phases.fruit &&
@@ -227,7 +225,7 @@ public class PlayerController : MonoBehaviour
                         if (highlightedPlot.occupiedPlant.HarvestFruit())
                         {
                             Harvesting.Play();
-                            changeState(states.holding, itemType.keranjang, highlightedPlot.occupiedPlant.fruit);
+                            changeState(states.holding, itemType.keranjang, highlightedPlot.occupiedPlant.fruit, direction);
                         }
                     }
                 }
@@ -238,11 +236,65 @@ public class PlayerController : MonoBehaviour
                     {
                         bugPlace.Play();
                         highlightedPlot.occupiedPlant.KasihHama();
-                        changeState(states.none);
+                        changeState(states.none, itemType.none, null, direction);
                     }
                 }
             }
         }
+
+        if(inputX == 0 && inputY == 0)
+        {
+            if (state == states.none)
+            {
+                switch (direction)
+                {
+                    case 'u': playerAnimation.Play("Player_idle_back"); break;
+                    case 'd': playerAnimation.Play("Player_idle_front"); break;
+                    case 'r': playerAnimation.Play("Player_idle_side"); break;
+                    case 'l': playerAnimation.Play("Player_idle_side"); break;
+                }
+
+            }
+            else if (state == states.holding)
+            {
+                switch (direction)
+                {
+                    case 'u': playerAnimation.Play("Player_idle_holding_back"); break;
+                    case 'd': playerAnimation.Play("Player_idle_holding_front"); break;
+                    case 'r': playerAnimation.Play("Player_idle_holding_side"); break;
+                    case 'l': playerAnimation.Play("Player_idle_holding_side"); break;
+                }
+            }
+        }
+        else
+        {
+            if (state == states.none)
+            {
+                switch (direction)
+                {
+                    case 'u': playerAnimation.Play("Player_run_back"); break;
+                    case 'd': playerAnimation.Play("Player_run_front"); break;
+                    case 'r': playerAnimation.Play("Player_run_side"); break;
+                    case 'l': playerAnimation.Play("Player_run_side"); break;
+                }
+
+            }
+            else if (state == states.holding)
+            {
+                switch (direction)
+                {
+                    case 'u': playerAnimation.Play("Player_run_holding_back"); break;
+                    case 'd': playerAnimation.Play("Player_run_holding_front"); break;
+                    case 'r': playerAnimation.Play("Player_run_holding_side"); break;
+                    case 'l': playerAnimation.Play("Player_run_holding_side"); break;
+                }
+            }
+        }
+
+        if (direction == 'l')
+            playerSprite.flipX = true;
+        else
+            playerSprite.flipX = false;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

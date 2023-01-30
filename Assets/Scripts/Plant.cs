@@ -33,6 +33,9 @@ public class Plant : MonoBehaviour
 
     private int waterFertilizerStartTime = 30;
 
+    public ParticleSystem particlesPoof;
+    public ParticleSystem particlesSparkle;
+
     public enum Phases{
         none,
         seed,
@@ -133,6 +136,7 @@ public class Plant : MonoBehaviour
         sr.sprite = GrowthPhase[2];
         currentPhase = Phases.stem;
         phaseTimer = Random.Range(10, 20);
+        particlesPoof.Play();
 
         StartCoroutine(randomizeNeedWaterFertilizer());
     }
@@ -142,6 +146,8 @@ public class Plant : MonoBehaviour
         sr.sprite = GrowthPhase[3];
         currentPhase = Phases.leaves;
         phaseTimer = Random.Range(10, 20);
+        particlesPoof.Play();
+        particlesSparkle.Stop();
 
         StartCoroutine(randomizeNeedWaterFertilizer());
     }
@@ -150,6 +156,8 @@ public class Plant : MonoBehaviour
     {
         sr.sprite = GrowthPhase[4];
         currentPhase = Phases.fruit;
+        particlesPoof.Play();
+        particlesSparkle.Play();
 
         if (infectedWithPest)
             harvestTimer = 30;
@@ -157,8 +165,12 @@ public class Plant : MonoBehaviour
 
     private void killPlant()
     {
+        Color tmp = sr.color;
+        tmp.a = 0f;
+        sr.color = tmp;
         transform.parent.gameObject.GetComponent<Plot>().occupiedPlant = null;
-        Destroy(this.gameObject);
+        particlesPoof.Play();
+        Destroy(this.gameObject, 1f);
         /*plantIsAlive = false;
         sr.color = Color.white;
         sr.sprite = GrowthPhase[0];
