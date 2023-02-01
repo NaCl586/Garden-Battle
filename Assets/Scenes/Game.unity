@@ -3624,7 +3624,7 @@ MonoBehaviour:
   timerText: {fileID: 1593670259}
   playerOneText: {fileID: 1000169812}
   playerTwoText: {fileID: 448366109}
-  timer: 5
+  timer: 180
   Tick: {fileID: 1438182731}
   TimeUp: {fileID: 1438182730}
 --- !u!4 &1438182729
